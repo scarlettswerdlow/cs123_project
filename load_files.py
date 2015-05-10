@@ -97,6 +97,16 @@ def get_all_subkeys_one_list(dictionary):
 			key_name.append(key)
 	return key_name
 
+def count_distinct(dictionary, key_to_count):
+
+	rd = {}
+	for key in dictionary.keys():
+		counted_id = dictionary[key][key_to_count]
+		rd[counted_id] = rd.get(counted_id, 0) + 1
+
+	return rd
+
+
 
 def load_dictionary(filename, key):
 	raw_dictionary = load_string_json_file(filename, key)
