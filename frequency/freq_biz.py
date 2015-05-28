@@ -22,4 +22,4 @@ class MRFreq(MRJob):
 
 
 if __name__ == '__main__':
-	MRsupport.run()
+	MRFreq.run()

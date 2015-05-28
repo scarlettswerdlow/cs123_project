@@ -2,10 +2,13 @@ from mrjob.job import MRJob
 from mrjob.step import MRStep
 import json
 import csv
+import heapq
 
 BUSINESS_LOC = 0
 DIVIDER = ','
 FREQUENCY_FILE = 'frequency/biz_freq.txt'
+LIFT = 3
+CUT_OFF = 0
 
 class IntersectionCount(MRJob):
   	
@@ -48,9 +51,7 @@ class IntersectionCount(MRJob):
 		yield biz_pair, sum(count)
 
 	def final_mapper_init(self):
-		'''
-		file goes here
-		'''
+		
 		f = open(self.options.freq_table,'rU')
 		self.dictionary = {}
 		for line in f:
@@ -73,23 +74,31 @@ class IntersectionCount(MRJob):
 		lift = confidence / prob_b
 		yield biz_pair, [prob_a,prob_b,confidence, lift]
 
+	def final_reducer_init(self):
+		self.heap = []
+		heapq.heapify(self.heap)
+
+	def final_reducer(self,biz_pair,line):
+		line_list = list(line)
+		lift = line_list[0][LIFT]
+		output_tuple = (biz_pair,line_list[0])
+		print output_tuple
+
+		if lift > CUT_OFF:
+			heapq.heappush(self.heap,(lift,output_tuple))
+
+	def last_reducer_final(self):
+		
+		for item in self.heap:
+			yield item[1][0], item[1][1]
+
 
 	def steps(self):
 		return [
 			MRStep(mapper=self.mapper_review,combiner=self.combiner_review,reducer=self.reducer_review),
 			MRStep(mapper=self.mapper_intersection,combiner=self.combiner_intersection,reducer=self.reducer_intersection),
-			MRStep(mapper_init=self.final_mapper_init,mapper=self.final_mapper)
+			MRStep(mapper_init=self.final_mapper_init,mapper=self.final_mapper,reducer_init=self.final_reducer_init,reducer=self.final_reducer,reducer_final=self.last_reducer_final)
 			]
-
-# def make_dictionary(table):
-	
-# 	rv = {}
-# 	for line in table:
-# 		print line
-# 		if line[0] not in rv:
-# 			rv[line[0]] = line[1]
-
-# 	return rv
 
 
 if __name__ == '__main__':
