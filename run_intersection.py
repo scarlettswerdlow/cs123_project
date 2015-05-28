@@ -12,7 +12,7 @@ if __name__ == '__main__':
         # Run the job
         runner.run()
         filename = open(OUTPUT_FILE,'w')
-        filename.write('biz_1, biz_2, prob_a, prob_b, confidence, lift\n')
+        filename.write('biz_1, biz_2, prob_a, prob_b,prob_a_b, confidence, lift\n')
 
 
         # Process the output
