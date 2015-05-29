@@ -7,8 +7,8 @@ import heapq
 BUSINESS_LOC = 0
 DIVIDER = ','
 FREQUENCY_FILE = 'frequency/biz_freq.txt'
-LIFT = 3
-CUT_OFF = 10000
+LIFT = 4
+CUT_OFF = 2000
 
 class IntersectionCount(MRJob):
   	
@@ -75,16 +75,24 @@ class IntersectionCount(MRJob):
 		yield biz_pair, [prob_a,prob_b,probability_a_b,	confidence, lift]
 
 	def final_reducer_init(self):
-		self.heap = [(0,[]) for x in range(CUT_OFF)]
+		self.heap = []
 		heapq.heapify(self.heap)
+		self.count = 0
 
 	def final_reducer(self,biz_pair,line):
 		line_list = list(line)
 		lift = line_list[0][LIFT]
 		output_tuple = (biz_pair,line_list[0])
-		min_lift, min_output_tuple = self.heap[0]
-		if lift > min_lift:
+		try:
+			min_lift, min_output_tuple = self.heap[0]
+		except:
+			pass
+		if self.count < CUT_OFF:
+			heapq.heappush(self.heap,(lift,output_tuple))
+			self.count += 1
+		elif lift > min_lift:
 			heapq.heapreplace(self.heap,(lift,output_tuple))
+
 
 		
 
@@ -105,7 +113,3 @@ class IntersectionCount(MRJob):
 
 if __name__ == '__main__':
 	IntersectionCount.run()
-
-
-
-
