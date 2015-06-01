@@ -20,10 +20,12 @@ if __name__ == '__main__':
 	heap = []
 	heapq.heapify(heap)
 	count = 0
+	line_count = 0
 	start_time = time.time()
 
 	for line in data:
-		if count % 1000000 == 0:
+		line_count += 1
+		if line_count % 1000000 == 0:
 			print "Counted: ",count, "Time: ",time.time() - start_time
 		lift = float(line[LIFT])
 		if lift < lift_floor:
