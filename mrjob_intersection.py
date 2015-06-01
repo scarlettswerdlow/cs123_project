@@ -7,7 +7,7 @@ import heapq
 BUSINESS_LOC = 0
 DIVIDER = ','
 LIFT = 4
-CUT_OFF = 50
+CUT_OFF = 100
 REVIEW_CUT_OFF = 8
 
 class IntersectionCount(MRJob):
@@ -65,14 +65,15 @@ class IntersectionCount(MRJob):
 		businesses = biz_pair.split(DIVIDER)
 		count_a = float(self.dictionary[businesses[0]])
 		count_b = float(self.dictionary[businesses[1]])
-		prob_a = count_a / self.users
+		prob_a = count_a / self.reviews
 		prob_b = count_b / self.reviews
 		probability_a_b = intersection_count / self.users
-		confidence = probability_a_b / prob_a
+		confidence = probability_a_b / prob_a #confidence * prob_a * user = intersection count
 		lift = confidence / prob_b
-		if count_a > REVIEW_CUT_OFF and count_b > REVIEW_CUT_OFF:
+		if (count_a > REVIEW_CUT_OFF) and (count_b > REVIEW_CUT_OFF):
 			yield biz_pair, [prob_a,prob_b,probability_a_b,	confidence, lift]
 
+# Final reducing done locally
 	# def final_combiner(self,biz_pair,line):
 	# 	line_list = list(line)
 	# 	yield biz_pair, line_list[0]
@@ -107,7 +108,7 @@ class IntersectionCount(MRJob):
 		return [
 			MRStep(mapper=self.mapper_review,combiner=self.combiner_review,reducer=self.reducer_review),
 			MRStep(mapper=self.mapper_intersection,combiner=self.combiner_intersection,reducer=self.reducer_intersection),
-			MRStep(mapper_init=self.final_mapper_init,mapper=self.final_mapper) #,combiner=self.final_combiner,reducer_init=self.final_reducer_init,reducer=self.final_reducer,reducer_final=self.last_reducer_final)
+			MRStep(mapper_init=self.final_mapper_init,mapper=self.final_mapper]#,combiner=self.final_combiner,reducer_init=self.final_reducer_init,reducer=self.final_reducer,reducer_final=self.last_reducer_final)
 			]
 
 
