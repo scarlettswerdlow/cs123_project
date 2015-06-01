@@ -32,7 +32,7 @@ yelpdf <- as.data.frame(yelp)
 names(yelpdf) <- c("row", "biz_a", "biz_b", "prob_a", "prob_b", "prob_ab", "conf", "lift")
 
 # Add some business data
-biz <- stream_in(file("yelp_academic_dataset_business.json"))
+biz <- stream_in(file("yelp_academic_dataset_business.json"), flatten=T)
 yelpdf$biz_a_name <- biz$name[match(yelpdf$biz_a, biz$business_id)]
 yelpdf$biz_b_name <- biz$name[match(yelpdf$biz_b, biz$business_id)]
 yelpdf$biz_a_state <- biz$state[match(yelpdf$biz_a, biz$business_id)]
@@ -106,15 +106,15 @@ par(mar=c(0,0,0,0))
 plot(network, vertex.label=NA, vertex.size=3, edge.curved=F)
 
 # Look at network statistics
-d <- as.data.frame(tail(sort(degree(network)), 100)) # Degrees
-d_biz <- biz[biz$business_id %in% labels(d)[[1]], 
-             c("business_id", "name", "state", "review_count", "stars")]
-write.csv(d_biz, "network/top_biz_by_degrees.csv")
+d <- degree(network) # Degrees
+ddf <- as.data.frame(d)
+ddf_top <- labels(ddf)[[1]][ddf$d > median(ddf$d)]
+write.csv(ddf_top, "network/top_biz_by_degrees.csv")
 
-b <- as.data.frame(tail(sort(betweenness(network)), 100)) # Betweenness
-b_biz <- biz[biz$business_id %in% labels(b)[[1]], 
-             c("business_id","name", "state", "review_count", "stars")]
-write.csv(b_biz, "network/top_biz_by_betweenness.csv")
+b <- betweenness(network) # Betweenness
+bdf <- as.data.frame(b)
+bdf_top <- labels(bdf)[[1]][bdf$b > median(bdf$b)]
+write.csv(bdf_top, "network/top_biz_by_betweenness.csv")
 
 #########################
 #                       #
