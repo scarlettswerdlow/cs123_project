@@ -1,12 +1,6 @@
 from mrjob.job import MRJob
 import json
 
-#command line counts number of lines in file
-#wc -l <filename>
-
-#command line to output to directory
-#python <run_file.py> <input file> -output_dir
-
 class MRUser(MRJob):
 
 	def mapper(self, _, line):
