@@ -8,7 +8,5 @@ if __name__ == '__main__':
 
 		f = open('f_user_run.txt', 'w')
 		for line in runner.stream_output():
-			#print line
 			key, value = job.parse_output_line(line)
 			f.write(key + ',' + str(value) + '\n')
-			#print key, value
