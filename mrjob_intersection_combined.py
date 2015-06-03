@@ -75,44 +75,43 @@ class IntersectionCount(MRJob):
 			yield biz_pair, [prob_a,prob_b,probability_a_b,	confidence, lift]
 
 #Final reducing done locally
-	# def final_combiner(self,biz_pair,line):
-	# 	line_list = list(line)
-	# 	yield biz_pair, line_list[0]
+	def final_combiner(self,biz_pair,line):
+		line_list = list(line)
+		yield biz_pair, line_list[0]
 
-	# def final_reducer_init(self):
-	# 	print "In Reducer"
-	# 	self.heap = []
-	# 	heapq.heapify(self.heap)
-	# 	self.count = 0
+	def final_reducer_init(self):
+		self.heap = []
+		heapq.heapify(self.heap)
+		self.count = 0
 
-	# def final_reducer(self,biz_pair,line):
-	# 	line_list = list(line)
-	# 	lift = line_list[0][LIFT]
-	# 	output_tuple = (biz_pair,line_list[0])
-	# 	try:
-	# 		min_lift, min_output_tuple = self.heap[0]
-	# 	except:
-	# 		pass
-	# 	if self.count < CUT_OFF:
-	# 		heapq.heappush(self.heap,(lift,output_tuple))
-	# 		self.count += 1
-	# 	elif lift > min_lift:
-	# 		heapq.heapreplace(self.heap,(lift,output_tuple))
+	def final_reducer(self,biz_pair,line):
+		line_list = list(line)
+		lift = line_list[0][LIFT]
+		output_tuple = (biz_pair,line_list[0])
+		try:
+			min_lift, min_output_tuple = self.heap[0]
+		except:
+			pass
+		if self.count < CUT_OFF:
+			heapq.heappush(self.heap,(lift,output_tuple))
+			self.count += 1
+		elif lift > min_lift:
+			heapq.heapreplace(self.heap,(lift,output_tuple))
 
-	# def last_reducer_final(self):
+	def last_reducer_final(self):
 		
-	# 	self.heap.sort(reverse=True)
-	# 	for item in self.heap:
-	# 		yield item[1][0], item[1][1]
+		self.heap.sort(reverse=True)
+		for item in self.heap:
+			yield item[1][0], item[1][1]
 
 
-	# def steps(self):
-	# 	return [
-	# 		MRStep(mapper=self.mapper_review,combiner=self.combiner_review,reducer=self.reducer_review),
-	# 		MRStep(mapper=self.mapper_intersection,combiner=self.combiner_intersection,reducer=self.reducer_intersection),
-	# 		MRStep(mapper_init=self.final_mapper_init,mapper=self.final_mapper,combiner=self.final_combiner),
-	# 		MRStep(reducer_init=self.final_reducer_init,reducer=self.final_reducer,reducer_final=self.last_reducer_final)
-	# 		]
+	def steps(self):
+		return [
+			MRStep(mapper=self.mapper_review,combiner=self.combiner_review,reducer=self.reducer_review),
+			MRStep(mapper=self.mapper_intersection,combiner=self.combiner_intersection,reducer=self.reducer_intersection),
+			MRStep(mapper_init=self.final_mapper_init,mapper=self.final_mapper,combiner=self.final_combiner),
+			MRStep(reducer_init=self.final_reducer_init,reducer=self.final_reducer,reducer_final=self.last_reducer_final)
+			]
 
 
 if __name__ == '__main__':
