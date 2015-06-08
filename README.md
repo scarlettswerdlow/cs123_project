@@ -23,15 +23,15 @@ Association rules are essentially a technique to identify a basket of goods that
 
 There are three key statistics in association rules. The first is support, which is the probability of an event. For instance, the support for business A being reviewed is:
 
-Support (A) = Pr (A) = # users who have reviewed A# users
+Support (A) = Pr (A) = # users who have reviewed A / # users
 
 The second key statistic is confidence, which is the probability of an event given some other event. For instance, the confidence for reviewing business B given a review of business A is:
 
-Confidence (B | A) = Support (A & B)Support (A)
+Confidence (B | A) = Support (A & B) / Support (A)
 
 This leads to the last statistic: lift, or the increase in the probability of an event given some other event. Mathematically:
 
-Lift (B | A) = Confidence (B | A)Support (B)
+Lift (B | A) = Confidence (B | A) / Support (B)
 
 We discuss how we calculated each of these statistics in the next section.
 
