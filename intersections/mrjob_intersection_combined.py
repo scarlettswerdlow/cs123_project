@@ -14,7 +14,7 @@ REVIEW_CUT_OFF = 8
 class IntersectionCount(MRJob):
   	
 	def configure_options(self):
-		# Configure constants from command line
+		# Configure constants from command line, user and review counts obtained from wc -l of files
 		super(IntersectionCount, self).configure_options()
 		self.add_file_option('--freq_table')
 		self.add_passthrough_option('--user_count',type=float,help='Length of user file')
