@@ -319,6 +319,8 @@ def pool_k_folds(dataframe,optimizer,parameterized_model,model_dict,test_column,
     args = zip(training_data_list,testing_data_list,model_list,optimizer_list,model_dict_list,test_column_list,chart_bools,verbose_list)
     
     dicts = p.map(unzip_and_run_model,args)
+    p.close()
+    p.join()
     
     return combine_model_dicts(dicts,folds)
 
